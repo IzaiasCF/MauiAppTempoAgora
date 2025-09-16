@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MauiAppTempoAgora.MainPage"
+             Title="Previsão do Tempo"
              BackgroundColor="DarkMagenta">
 
     <ScrollView>
@@ -9,10 +10,12 @@
             Padding="30,0"
             Spacing="25">
 
-            <Entry x:Name="txt_cidade" />
+            <Entry x:Name="txt_cidade"
+                   TextColor="White"
+                   PlaceholderColor="NavajoWhite"/>
             <Button Text="Buscar" Clicked="Button_Clicked" />
 
-            <Label x:Name="lbl_res" />
+            <Label x:Name="lbl_res" TextColor="NavajoWhite"/>
 
         </VerticalStackLayout>
     </ScrollView>
