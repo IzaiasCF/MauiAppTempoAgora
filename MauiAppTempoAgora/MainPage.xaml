@@ -14,27 +14,27 @@
                     Padding="10" 
                     Margin="5, 10, 1, 1" 
                     Clicked="Button_Clicked_Localizacao" />
-            <Label x:Name="lbl_coords" />
 
-            <Entry
-                x:Name="txt_cidade"
-                FontAttributes="Bold"
-                PlaceholderColor="NavajoWhite"
-                TextColor="DarkBlue"
-                Margin="0, 10, 5, 5" />
+            <Label x:Name="lbl_coords" 
+                    Margin="0,0,0,10" />
+
+            <Entry x:Name="txt_cidade"
+                   FontAttributes="Bold"
+                   PlaceholderColor="NavajoWhite"
+                   TextColor="DarkBlue"
+                   Margin="0, 10, 5, 5" />
 
             <Button Text="Buscar Previsão"
                     Padding="5.0"
-                    Margin="5, 10, 1, 1"
+                    Margin="0, 5, 1, 1"
                     Clicked="Button_Clicked_Previsao" />
 
-            <Label
-                x:Name="lbl_res"
-                FontAttributes="Bold"
-                TextColor="DarkBlue"
-                Margin="0, 20, 0, 0" />
+            <Label x:Name="lbl_res"
+                   FontAttributes="Bold"
+                   TextColor="DarkBlue"
+                   Margin="0, 5, 1, 1" />
 
-            <WebView x:Name="wv_mapa" HeightRequest="300" />
+            <WebView x:Name="wv_mapa" HeightRequest="180" />
 
         </VerticalStackLayout>
     </ScrollView>
