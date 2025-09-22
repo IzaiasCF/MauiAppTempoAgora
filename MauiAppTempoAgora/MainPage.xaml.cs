@@ -1,5 +1,6 @@
 ﻿using MauiAppTempoAgora.Models;
 using MauiAppTempoAgora.Services;
+using System;
 using System.Net.Http;
 
 namespace MauiAppTempoAgora
@@ -11,7 +12,7 @@ namespace MauiAppTempoAgora
             InitializeComponent();
         }
 
-        private async void Button_Clicked(object sender, EventArgs e)
+        private async void Button_Clicked_Previsao(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txt_cidade.Text))
             {
@@ -56,6 +57,49 @@ namespace MauiAppTempoAgora
             catch (Exception ex)
             {
                 await DisplayAlert("Ops!", ex.Message, "Ok");
+            }
+        }
+
+        private async void Button_Clicked_Localizacao(object sender, EventArgs e)
+        {
+            try
+            {
+                GeolocationRequest request = 
+                    new GeolocationRequest(
+                        GeolocationAccuracy.Medium,
+                        TimeSpan.FromSeconds(10)
+                    );
+
+                Location? local = await Geolocation.Default.GetLocationAsync(request);
+
+                if (local != null) 
+                {
+                    string local_disp = $"Latitude: {local.Latitude} \n" +
+                                        $"Longitude: {local.Longitude}";
+
+                    lbl_coords.Text = local_disp;
+                }
+                else 
+                {
+                    lbl_coords.Text = "Nenhuma localização";
+                }
+
+            }
+            catch (FeatureNotSupportedException fnsEx)
+            {
+                await DisplayAlert("Erro: Dispositivo não suporta", fnsEx.Message, "Ok");
+            }
+            catch (FeatureNotEnabledException fnsEx)
+            {
+                await DisplayAlert("Erro: Localização desabilitada", fnsEx.Message, "Ok");
+            }
+            catch (PermissionException pEx)
+            {
+                await DisplayAlert("Erro: Permissão da localização", pEx.Message, "Ok");
+            }
+            catch (Exception ex) 
+            {
+                await DisplayAlert("Erro", ex.Message, "Ok");
             }
         }
     }
