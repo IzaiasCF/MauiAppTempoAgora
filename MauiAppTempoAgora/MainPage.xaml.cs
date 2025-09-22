@@ -1,7 +1,7 @@
 ﻿using MauiAppTempoAgora.Models;
 using MauiAppTempoAgora.Services;
 using System;
-using System.Net.Http;
+using System.Diagnostics;
 
 namespace MauiAppTempoAgora
 {
@@ -14,49 +14,51 @@ namespace MauiAppTempoAgora
 
         private async void Button_Clicked_Previsao(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txt_cidade.Text))
-            {
-                lbl_res.Text = "Preencha a cidade:";
-                return;
-            }
-
             try
             {
-                Tempo? t = await DataService.GetPrevisao(txt_cidade.Text);
-
-                if (t == null)
+                if (!string.IsNullOrEmpty(txt_cidade.Text))
                 {
-                    await DisplayAlert("Cidade não encontrada",
-                        "O nome da cidade não foi encontrado. Verifique e tente novamente.",
-                        "OK");
-                    lbl_res.Text = "";
-                    return;
+                    Tempo? t = await DataService.GetPrevisao(txt_cidade.Text);
+
+                    if (t != null)
+                    {
+                        string dados_previsao = "";
+
+                        dados_previsao = $"Latitude: {t.lat} \n" +
+                                         $"Longitude: {t.lon} \n" +
+                                         $"Nascer do Sol: {t.sunrise} \n" +
+                                         $"Por do Sol: {t.sunset} \n" +
+                                         $"Temp Máx: {t.temp_max} \n" +
+                                         $"Temp Min: {t.temp_min} \n";
+
+                        lbl_res.Text = dados_previsao;
+
+                        string mapa = $"https://embed.windy.com/embed.html?" +
+                                      $"type=map&location=coordinates&metricRain=mm&metricTemp=°C" +
+                                      $"&metricWind=km/h&zoom=5&overlay=wind&product=ecmwf&level=surface" +
+                                      $"&lat={t.lat.ToString().Replace(",", ".")}&lon={t.lon.ToString().Replace(",", ".")}";
+
+                        wv_mapa.Source = mapa;
+
+                        Debug.WriteLine(mapa);
+
+                    }
+                    else
+                    {
+
+                        lbl_res.Text = "Sem dados de Previsão";
+                    }
+
+                }
+                else
+                {
+                    lbl_res.Text = "Preencha a cidade.";
                 }
 
-                string dados_previsao = "";
-
-                dados_previsao =
-                    $"Latitude: {t.lat}\n" +
-                    $"Longitude: {t.lon}\n" +
-                    $"Nascer do Sol: {t.sunrise}\n" +
-                    $"Por do Sol: {t.sunset}\n" +
-                    $"Temperatura Máxima: {t.temp_max}\n" +
-                    $"Temperatura Mínima: {t.temp_min}\n" +
-                    $"Descrição do Clima: {t.description}\n" +
-                    $"Velocidade do Vento: {t.speed} \n" +
-                    $"Visibilidade: {t.visibility} \n";
-
-                lbl_res.Text = dados_previsao;
-            }
-            catch (HttpRequestException)
-            {
-                await DisplayAlert("Sem conexão",
-                    "Não foi possível conectar à internet. Verifique sua rede e tente novamente.",
-                    "OK");
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Ops!", ex.Message, "Ok");
+                await DisplayAlert("Ops", ex.Message, "OK");
             }
         }
 
@@ -64,45 +66,44 @@ namespace MauiAppTempoAgora
         {
             try
             {
-                GeolocationRequest request = 
-                    new GeolocationRequest(
-                        GeolocationAccuracy.Medium,
-                        TimeSpan.FromSeconds(10)
-                    );
+                GeolocationRequest request = new GeolocationRequest(
+                    GeolocationAccuracy.Medium,
+                    TimeSpan.FromSeconds(10)
+                );
 
                 Location? local = await Geolocation.Default.GetLocationAsync(request);
 
-                if (local != null) 
+                if (local != null)
                 {
                     string local_disp = $"Latitude: {local.Latitude} \n" +
                                         $"Longitude: {local.Longitude}";
 
                     lbl_coords.Text = local_disp;
-                    
-                    // Pega nome da cidade
+
+                    // pega nome da cidade que está nas coordenadas.
                     GetCidade(local.Latitude, local.Longitude);
+
                 }
-                else 
+                else
                 {
                     lbl_coords.Text = "Nenhuma localização";
                 }
-
             }
             catch (FeatureNotSupportedException fnsEx)
             {
-                await DisplayAlert("Erro: Dispositivo não suporta", fnsEx.Message, "Ok");
+                await DisplayAlert("Erro: Dispositivo não Suporta", fnsEx.Message, "OK");
             }
-            catch (FeatureNotEnabledException fnsEx)
+            catch (FeatureNotEnabledException fneEx)
             {
-                await DisplayAlert("Erro: Localização desabilitada", fnsEx.Message, "Ok");
+                await DisplayAlert("Erro: Localização Desabilitada", fneEx.Message, "OK");
             }
             catch (PermissionException pEx)
             {
-                await DisplayAlert("Erro: Permissão da localização", pEx.Message, "Ok");
+                await DisplayAlert("Erro: Permissão da Localização", pEx.Message, "OK");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                await DisplayAlert("Erro", ex.Message, "Ok");
+                await DisplayAlert("Erro", ex.Message, "OK");
             }
         }
 
@@ -121,7 +122,7 @@ namespace MauiAppTempoAgora
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Erro: Obtenção do nome da cidade.", ex.Message, "Ok");
+                await DisplayAlert("Erro: Obtenção do nome da Cidade", ex.Message, "OK");
             }
         }
     }
