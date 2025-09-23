@@ -82,8 +82,8 @@ namespace MauiAppTempoAgora
                                         $"Longitude: {local.Longitude}";
 
                     lbl_coords.Text = local_disp;
-
-                    // pega nome da cidade que está nas coordenadas.
+                    lbl_res.Text = local_disp;
+                    // Pega nome da cidade que está nas coordenadas.
                     GetCidade(local.Latitude, local.Longitude);
 
                 }
